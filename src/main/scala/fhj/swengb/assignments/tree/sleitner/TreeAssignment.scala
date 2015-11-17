@@ -1,4 +1,4 @@
-package fhj.swengb.assignments.tree.rladstaetter
+package fhj.swengb.assignments.tree.sleitner
 
 import javafx.scene.paint.Color
 
@@ -77,9 +77,7 @@ object MathUtil {
     * @param value  a double value
     * @return
     */
-  def round(value: Double): Double = {
-    ???
-  }
+  def round(value: Double): Double = BigDecimal(value).setScale(3, BigDecimal.RoundingMode.HALF_UP).toDouble
 
   /**
     * turns an angle given in degrees to a value in radiants.
@@ -87,15 +85,14 @@ object MathUtil {
     * @param angle
     * @return
     */
-  def toRadiants(angle: AngleInDegrees): AngleInRadiants = {
-   ???
-  }
+  def toRadiants(angle: AngleInDegrees): AngleInRadiants = angle.toRadians
 }
 
 
 object L2D {
 
   import MathUtil._
+  import scala.math.{sin,cos}
 
   /**
     * Given a startpoint, an angle and a length the endpoint of the line
@@ -108,7 +105,8 @@ object L2D {
     * @return
     */
   def apply(start: Pt2D, angle: AngleInDegrees, length: Double, color: Color): L2D = {
-    ???
+    val end = Pt2D(round(cos(angle.toRadians) * length),round(sin(angle.toRadians) * length))
+    L2D(start,end,color)
   }
 
 
