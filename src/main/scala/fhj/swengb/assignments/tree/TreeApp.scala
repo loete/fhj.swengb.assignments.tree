@@ -12,7 +12,7 @@ import javafx.scene.shape.{Line, StrokeType}
 import javafx.scene.{Parent, Scene}
 import javafx.stage.Stage
 
-import fhj.swengb.assignments.tree.sleitner.{Pt2D, L2D, Graph}
+import fhj.swengb.assignments.tree.sleitner.{AngleInDegrees, Pt2D, L2D, Graph}
 
 import scala.collection.JavaConversions._
 import scala.util.control.NonFatal
@@ -22,7 +22,28 @@ import scala.util.control.NonFatal
   */
 object TreeApp {
   def main(args: Array[String]) {
-    Application.launch(classOf[TreeApp], args: _*)
+    //Application.launch(classOf[TreeApp], args: _*)
+
+    val s=Pt2D(0.0,0.0)
+    val a=0
+    val l=100
+    val c=Graph.colorMap(0)
+    val f=1
+    val dA:Double=1
+
+    val one = L2D.apply(s,a,l,c)
+    println(one.end,one.start)
+    val two = L2D.apply(s,a,l*f,c).left(f,dA,c)
+    val t1 = Pt2D(100.0,0.0)
+    val t2 = Pt2D(199.985,-1.745)
+    val test = L2D.apply(t1,t2,c)
+
+    println("1:"+ one)
+    println("2:"+ two)
+    println("test:" +test)
+
+
+
   }
 }
 

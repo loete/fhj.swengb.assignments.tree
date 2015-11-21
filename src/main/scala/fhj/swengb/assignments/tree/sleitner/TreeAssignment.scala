@@ -2,7 +2,7 @@ package fhj.swengb.assignments.tree.sleitner
 
 import javafx.scene.paint.Color
 
-import scala.math.BigDecimal.RoundingMode
+import scala.math.BigDecimal
 import scala.util.Random
 
 object Graph {
@@ -29,7 +29,6 @@ object Graph {
   def randomTree(pt: Pt2D): Tree[L2D] =
     mkGraph(pt, Random.nextInt(360), Random.nextDouble() * 150, Random.nextInt(7))
 
-
   /**
     * Given a Tree of L2D's and a function which can convert any L2D to a Line,
     * you have to traverse the tree (visit all nodes) and create a sequence
@@ -40,7 +39,12 @@ object Graph {
     * @return
     */
   def traverse[A, B](tree: Tree[A])(convert: A => B): Seq[B] = {
-  ???
+      def traverseRec[A,B](tree:Tree[A],acc:Seq[B])(convert: A => B): Seq[B] = tree match {
+        case Node(x) => convert(x) +: acc
+        case Branch(l,r) => traverseRec(l,acc)(convert) ++ acc ++ traverseRec(r,acc)(convert)
+      }
+      val acc:Seq[B] = Nil
+      traverseRec(tree,acc)(convert)
   }
 
   /**
@@ -64,10 +68,19 @@ object Graph {
               angle: Double = 45.0,
               colorMap: Map[Int, Color] = Graph.colorMap): Tree[L2D] = {
     assert(treeDepth <= colorMap.size, s"Treedepth higher than color mappings - bailing out ...")
-    ???
- }
-
+    if (treeDepth == 0) Node(L2D.apply(start, initialAngle, length, colorMap(0)))
+    else {
+      def insert(s: Pt2D, iA: AngleInDegrees, l: Double, tD: Int, f: Double, a: Double, cM: Map[Int, Color] = Graph.colorMap): Tree[L2D] = {
+        val root = L2D.apply(s, iA, l, cM(0))
+        val left = root.left(f, a, cM(0))
+        val right = root.right(f, a, cM(0))
+        Branch(Node(root),Branch(Node(left),Node(right)))
+      }
+      insert(start, initialAngle, length, treeDepth, factor, angle, colorMap)
+    }
+  }
 }
+
 
 object MathUtil {
 
@@ -87,7 +100,6 @@ object MathUtil {
     */
   def toRadiants(angle: AngleInDegrees): AngleInRadiants = angle.toRadians
 }
-
 
 object L2D {
 
@@ -142,7 +154,4 @@ case class L2D(start: Pt2D, end: Pt2D, color: Color) {
   def right(factor: Double, deltaAngle: AngleInDegrees, c: Color): L2D = {
     L2D(end, angle + deltaAngle, length * factor, c)
   }
-
-
 }
-

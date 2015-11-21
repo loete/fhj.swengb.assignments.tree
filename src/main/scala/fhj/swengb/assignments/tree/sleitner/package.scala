@@ -14,6 +14,4 @@ package object sleitner {
   case class Branch[T](left: Tree[T], right: Tree[T]) extends Tree[T]
 
   case class Node[T](value: T) extends Tree[T]
-
-
 }
