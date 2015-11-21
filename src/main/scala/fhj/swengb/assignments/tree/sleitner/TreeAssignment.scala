@@ -2,7 +2,6 @@ package fhj.swengb.assignments.tree.sleitner
 
 import javafx.scene.paint.Color
 
-import scala.annotation.tailrec
 import scala.math.BigDecimal
 import scala.util.Random
 
@@ -44,8 +43,7 @@ object Graph {
         case Node(x) => convert(x) +: acc
         case Branch(l,r) => traverseRec(l,acc)(convert) ++ acc ++ traverseRec(r,acc)(convert)
       }
-      val acc:Seq[B] = Nil
-      traverseRec(tree,acc)(convert)
+      traverseRec(tree,acc=Nil)(convert)
   }
 
   /**
@@ -70,32 +68,20 @@ object Graph {
               colorMap: Map[Int, Color] = Graph.colorMap): Tree[L2D] = {
     assert(treeDepth <= colorMap.size, s"Treedepth higher than color mappings - bailing out ...")
 
-    def insert(point: L2D,acc:Int):Tree[L2D] = {
-      if(acc == treeDepth) Branch(Node(point),Branch(Node(point.left(factor,angle,colorMap(acc-1))),Node(point.right(factor,angle,colorMap(acc-1)))))
-      else  Branch(Node(point),Branch(insert(point.left(factor,angle,colorMap(acc-1)),acc+1),insert(point.right(factor,angle,colorMap(acc-1)),acc+1)))
+    def insert(point:L2D,acc:Int):Tree[L2D] = acc match {
+      case last if(acc == treeDepth) => Branch(Node(point),Branch(Node(point.left(factor,angle,colorMap(acc-1))),Node(point.right(factor,angle,colorMap(acc-1)))))
+      case _ => Branch(Node(point),Branch(insert(point.left(factor,angle,colorMap(acc-1)),acc+1),insert(point.right(factor,angle,colorMap(acc-1)),acc+1)))
     }
 
     val acc = 1
-    val pt = L2D(start,initialAngle,length,colorMap(acc-1))
+    val startpt = L2D(start,initialAngle,length,colorMap(acc-1))
 
     acc match {
-      case root if(treeDepth==0) => Node(L2D.apply(start, initialAngle, length, colorMap(0)))
-      case branch => insert(pt,acc)
+      case root if(treeDepth==0) => Node(startpt)
+      case tree => insert(startpt,acc)
     }
-
-    /*if (treeDepth == 0)
-    else {
-      def insert(s: Pt2D, iA: AngleInDegrees, l: Double, tD: Int, f: Double, a: Double, cM: Map[Int, Color] = Graph.colorMap): Tree[L2D] = {
-        val root = L2D.apply(s, iA, l, cM(0))
-        val left = root.left(f, a, cM(0))
-        val right = root.right(f, a, cM(0))
-        Branch(Node(root),Branch(Node(left),Node(right)))
-      }
-      insert(start, initialAngle, length, treeDepth, factor, angle, colorMap)
-    }*/
   }
 }
-
 
 object MathUtil {
 
