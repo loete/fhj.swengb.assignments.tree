@@ -20,6 +20,14 @@ class TreeTest {
       Node(L2D(Pt2D(100.0, 0.0), Pt2D(199.985, -1.745), colorMap(0))),
       Node(L2D(Pt2D(100.0, 0.0), Pt2D(199.985, 1.745), colorMap(0)))))
 
+  private val treeOfSize2: Branch[L2D] = Branch(
+    rootNode,
+    Branch(
+      Branch(Node(L2D(Pt2D(100.0, 0.0), Pt2D(199.985, -1.745), colorMap(0))),
+        Branch(Node(L2D(Pt2D(199.985, -1.745), Pt2D(299.924, -5.235), colorMap(1))), Node(L2D(Pt2D(199.985, -1.745), Pt2D(299.985, -1.745), colorMap(1))))),
+      Branch(Node(L2D(Pt2D(100.0, 0.0), Pt2D(199.985, 1.745), colorMap(0))),
+        Branch(Node(L2D(Pt2D(199.985, 1.745), Pt2D(299.985, 1.745), colorMap(1))), Node(L2D(Pt2D(199.985, 1.745), Pt2D(299.924, 5.235), colorMap(1)))))))
+
 
   @Test def testRound(): Unit = {
     assertEquals(0.001, MathUtil.round(0.001232), 0.0)
@@ -73,4 +81,24 @@ class TreeTest {
 
   }
 
+  @Test def testTraverse2(): Unit = {
+    val seqs: Seq[L2D] = Graph.traverse(treeOfSize2)(l2d => l2d)
+    assertEquals(7, seqs.size)
+
+    val expected =
+      List(
+        L2D(Pt2D(0.0, 0.0), Pt2D(100.0, 0.0), colorMap(0)),
+        L2D(Pt2D(100.0, 0.0), Pt2D(199.985, -1.745), colorMap(0)),
+        L2D(Pt2D(199.985, -1.745), Pt2D(299.924, -5.235), colorMap(1)),
+        L2D(Pt2D(199.985, -1.745), Pt2D(299.985, -1.745), colorMap(1)),
+        L2D(Pt2D(100.0, 0.0), Pt2D(199.985, 1.745), colorMap(0)),
+        L2D(Pt2D(199.985, 1.745), Pt2D(299.985, 1.745), colorMap(1)),
+        L2D(Pt2D(199.985, 1.745), Pt2D(299.924, 5.235), colorMap(1)))
+    assertEquals(expected, seqs)
+
+    expected.foreach {
+      l2d => assertTrue(seqs.contains(l2d))
+    }
+
+  }
 }

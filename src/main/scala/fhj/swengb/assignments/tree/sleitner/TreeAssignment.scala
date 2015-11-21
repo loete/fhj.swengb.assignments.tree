@@ -2,6 +2,7 @@ package fhj.swengb.assignments.tree.sleitner
 
 import javafx.scene.paint.Color
 
+import scala.annotation.tailrec
 import scala.math.BigDecimal
 import scala.util.Random
 
@@ -68,7 +69,21 @@ object Graph {
               angle: Double = 45.0,
               colorMap: Map[Int, Color] = Graph.colorMap): Tree[L2D] = {
     assert(treeDepth <= colorMap.size, s"Treedepth higher than color mappings - bailing out ...")
-    if (treeDepth == 0) Node(L2D.apply(start, initialAngle, length, colorMap(0)))
+
+    def insert(point: L2D,acc:Int):Tree[L2D] = {
+      if(acc == treeDepth) Branch(Node(point),Branch(Node(point.left(factor,angle,colorMap(acc-1))),Node(point.right(factor,angle,colorMap(acc-1)))))
+      else  Branch(Node(point),Branch(insert(point.left(factor,angle,colorMap(acc-1)),acc+1),insert(point.right(factor,angle,colorMap(acc-1)),acc+1)))
+    }
+
+    val acc = 1
+    val pt = L2D(start,initialAngle,length,colorMap(acc-1))
+
+    acc match {
+      case root if(treeDepth==0) => Node(L2D.apply(start, initialAngle, length, colorMap(0)))
+      case branch => insert(pt,acc)
+    }
+
+    /*if (treeDepth == 0)
     else {
       def insert(s: Pt2D, iA: AngleInDegrees, l: Double, tD: Int, f: Double, a: Double, cM: Map[Int, Color] = Graph.colorMap): Tree[L2D] = {
         val root = L2D.apply(s, iA, l, cM(0))
@@ -77,7 +92,7 @@ object Graph {
         Branch(Node(root),Branch(Node(left),Node(right)))
       }
       insert(start, initialAngle, length, treeDepth, factor, angle, colorMap)
-    }
+    }*/
   }
 }
 
@@ -117,7 +132,7 @@ object L2D {
     * @return
     */
   def apply(start: Pt2D, angle: AngleInDegrees, length: Double, color: Color): L2D = {
-    val end = Pt2D(round(cos(angle.toRadians) * length),round(sin(angle.toRadians) * length))
+    val end = Pt2D(start.ax+round(cos(angle.toRadians) * length),start.ay+round(sin(angle.toRadians) * length))
     L2D(start,end,color)
   }
 

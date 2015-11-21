@@ -2,8 +2,8 @@ package fhj.swengb.assignments.tree
 
 /**
   * a packet object is a place to store functions and other stuff which
-  * should be visible only in this package.
-  */
+* should be visible only in this package.
+*/
 package object sleitner {
 
   type AngleInDegrees = Double
